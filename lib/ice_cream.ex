@@ -3,11 +3,12 @@ defmodule IceCream do
             when is_atom(term) or is_binary(term) or is_number(term) or is_pid(term) or
                    is_list(term) or is_map(term)
 
-  defmacro(ic(term)) do
+  defmacro ic(term) do
     label =
       case term do
-        {label, _, _} -> label
-        other when is_primitive(other) -> ""
+        {:%{}, _, _} -> nil
+        {label, _, nil} -> label
+        other when is_primitive(other) -> nil
         other -> raise "Did not expect #{inspect(other)}"
       end
       |> to_string()
