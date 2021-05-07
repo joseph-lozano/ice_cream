@@ -30,11 +30,17 @@ ic(:math.pi())
 ic(:math.pi())
 ic(:math.pow(2, 3))
 
-"1"
-|> String.to_integer()
-|> :math.sin()
-|> ic()
+2
+|> :math.pow(3)
 |> ic()
 
 list = 1..100 |> Enum.to_list()
 ic(list)
+
+ic()
+
+defmodule Foo do
+  def bar do
+    ic()
+  end
+end

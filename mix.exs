@@ -13,6 +13,7 @@ defmodule IceCream.MixProject do
       package: package(),
       docs: [
         main: "readme",
+        logo: "logo.svg",
         extras: ["README.md"]
       ]
     ]
