@@ -12,7 +12,7 @@ defmodule IceCream.MixProject do
       source_url: "https://github.com/joseph-lozano/ice_cream",
       package: package(),
       docs: [
-        main: "IceCream",
+        main: "readme",
         extras: ["README.md"]
       ]
     ]
