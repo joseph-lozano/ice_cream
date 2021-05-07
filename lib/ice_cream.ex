@@ -1,5 +1,6 @@
 defmodule IceCream do
   defmacro ic(term, opts \\ []) do
+    opts = Keyword.merge(Application.get_all_env(:ice_cream), opts)
     label = ["ic| ", Macro.to_string(term)]
     opts = Keyword.merge([label: label], opts)
 
