@@ -27,6 +27,7 @@ end
 ic(Math.add(1, 2))
 ic(Atom.to_string(:foo))
 ic(:math.pi())
+ic(:math.pi())
 ic(:math.pow(2, 3))
 
 "1"
@@ -35,4 +36,5 @@ ic(:math.pow(2, 3))
 |> ic()
 |> ic()
 
-ic()
+list = 1..100 |> Enum.to_list()
+ic(list)

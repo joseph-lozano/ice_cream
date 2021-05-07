@@ -1,9 +1,10 @@
 defmodule IceCream do
-  defmacro ic(term) do
-    label = IO.inspect(Macro.to_string(term))
+  defmacro ic(term, opts \\ []) do
+    label = ["ic| ", Macro.to_string(term)]
+    opts = Keyword.merge([label: label], opts)
 
     quote do
-      IO.inspect(unquote(term), label: "ic|" <> unquote(label))
+      IO.inspect(unquote(term), unquote(opts))
     end
   end
 
@@ -23,7 +24,7 @@ defmodule IceCream do
   defmacro __using__(_opts) do
     quote do
       require IceCream
-      import IceCream, only: [ic: 0, ic: 1]
+      import IceCream
     end
   end
 end
