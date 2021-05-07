@@ -6,7 +6,6 @@ defmodule IceCream.MixProject do
       name: "Ice Cream",
       app: :ice_cream,
       version: "0.0.1",
-      elixir: "~> 1.11",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "Elixir port of IceCreame (python pacakge)",
@@ -24,9 +23,7 @@ defmodule IceCream.MixProject do
 
   # Run "mix help compile.app" to learn about applications.
   def application do
-    [
-      extra_applications: [:logger]
-    ]
+    []
   end
 
   # Run "mix help deps" to learn about dependencies.
