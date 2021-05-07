@@ -1,5 +1,5 @@
 require IceCream
-import IceCream, only: [ic: 1]
+import IceCream
 
 # int = 123
 # ic(123)
@@ -24,7 +24,15 @@ defmodule Math do
   def add(a, b), do: a + b
 end
 
-ic(Math.add(1,2))
+ic(Math.add(1, 2))
 ic(Atom.to_string(:foo))
 ic(:math.pi())
-ic(:math.pow(2,3))
+ic(:math.pow(2, 3))
+
+"1"
+|> String.to_integer()
+|> :math.sin()
+|> ic()
+|> ic()
+
+ic()
