@@ -27,20 +27,29 @@ end
 ic(Math.add(1, 2))
 ic(Atom.to_string(:foo))
 ic(:math.pi())
-ic(:math.pi())
+
 ic(:math.pow(2, 3))
 
-2
-|> :math.pow(3)
-|> ic()
+Application.put_env(:ice_cream, :location, true)
+Process.sleep(400)
+ic(:math.pi())
 
-list = 1..100 |> Enum.to_list()
-ic(list)
-
-ic()
+Application.put_env(:ice_cream, :line, true)
+Process.sleep(400)
 
 defmodule Foo do
-  def bar do
-    ic()
+  def bar(x) do
+    ic(x)
   end
 end
+
+Foo.bar(1)
+
+# 2
+# |> :math.pow(3)
+# |> ic()
+
+# list = 1..100 |> Enum.to_list()
+# ic(list)
+
+# ic()

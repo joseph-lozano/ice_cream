@@ -10,10 +10,10 @@ defmodule IceCream do
       file = Path.relative_to_cwd(file)
 
       if is_nil(function) do
-        IO.puts(inspect("ic|#{file}:#{line}"))
+        IO.puts("ic| #{file}:#{line}")
       else
         {func, arity} = function
-        IO.puts(inspect("ic| #{file}:#{line} in #{module}.#{func}/#{arity} "))
+        IO.puts("ic| #{file}:#{line} in #{module}.#{func}/#{arity}")
       end
     end
   end
@@ -45,12 +45,34 @@ defmodule IceCream do
   """
 
   defmacro ic(term, opts \\ []) do
-    opts = Keyword.merge(Application.get_all_env(:ice_cream), opts)
-    label = ["ic| ", Macro.to_string(term)]
-    opts = Keyword.merge([label: label], opts)
+    label = [Macro.to_string(term)]
 
     quote do
-      IO.inspect(unquote(term), unquote(opts))
+      opts = Keyword.merge(Application.get_all_env(:ice_cream), unquote(opts))
+      label = unquote(label)
+
+      label =
+        if !!Keyword.get(opts, :line) and not is_nil(__ENV__.function) do
+          %{module: module, function: function} = __ENV__
+          {func, arity} = function
+          ["in #{module}.#{func}/#{arity} " | label]
+        else
+          label
+        end
+
+      label =
+        if Keyword.get(opts, :location) do
+          %{file: file, line: line} = __ENV__
+          file = Path.relative_to_cwd(file)
+          ["#{file}:#{line} " | label]
+        else
+          label
+        end
+
+      label = ["ic| " | label]
+      opts = Keyword.merge([label: label], opts)
+
+      IO.inspect(unquote(term), opts)
     end
   end
 
