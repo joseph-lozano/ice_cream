@@ -5,7 +5,7 @@ defmodule IceCream.MixProject do
     [
       name: "Ice Cream",
       app: :ice_cream,
-      version: "0.0.1",
+      version: "0.0.2",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "Elixir port of IceCreame (python pacakge)",
