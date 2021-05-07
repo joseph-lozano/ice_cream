@@ -10,7 +10,11 @@ defmodule IceCream.MixProject do
       deps: deps(),
       description: "Elixir port of IceCreame (python pacakge)",
       source_url: "https://github.com/joseph-lozano/ice_cream",
-      package: package()
+      package: package(),
+      docs: [
+        main: "IceCream",
+        extras: ["README.md"]
+      ]
     ]
   end
 
