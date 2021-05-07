@@ -52,7 +52,7 @@ defmodule IceCream do
       label = unquote(label)
 
       label =
-        if !!Keyword.get(opts, :line) and not is_nil(__ENV__.function) do
+        if !!Keyword.get(opts, :function) and not is_nil(__ENV__.function) do
           %{module: module, function: function} = __ENV__
           {func, arity} = function
           ["in #{module}.#{func}/#{arity} " | label]
