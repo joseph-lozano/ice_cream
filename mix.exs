@@ -8,7 +8,7 @@ defmodule IceCream.MixProject do
       version: "0.0.2",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
-      description: "Elixir port of IceCreame (python pacakge)",
+      description: "Never use IO.inspect again",
       source_url: "https://github.com/joseph-lozano/ice_cream",
       package: package(),
       docs: [
