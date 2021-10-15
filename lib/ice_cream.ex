@@ -6,15 +6,8 @@ defmodule IceCream do
 
   defmacro ic() do
     quote do
-      %{file: file, line: line, module: module, function: function} = __ENV__
-      file = Path.relative_to_cwd(file)
-
-      if is_nil(function) do
-        IO.puts("ic| #{file}:#{line}")
-      else
-        {func, arity} = function
-        IO.puts("ic| #{file}:#{line} in #{module}.#{func}/#{arity}")
-      end
+      IceCream.build_label("", __ENV__, function: true, location: true)
+      |> IO.puts()
     end
   end
 
@@ -45,41 +38,43 @@ defmodule IceCream do
   """
 
   defmacro ic(term, opts \\ []) do
-    label = [Macro.to_string(term)]
+    label_io_list = [Macro.to_string(term)]
 
     quote do
-      opts = Keyword.merge(Application.get_all_env(:ice_cream), unquote(opts))
-      label = unquote(label)
+      label = IceCream.build_label(unquote(label_io_list), __ENV__, unquote(opts))
+      inspect_opts = Keyword.merge([label: label], unquote(opts))
 
-      label =
-        if !!Keyword.get(opts, :function) and not is_nil(__ENV__.function) do
-          %{module: module, function: function} = __ENV__
-          {func, arity} = function
-          ["in #{module}.#{func}/#{arity} " | label]
-        else
-          label
-        end
-
-      label =
-        if Keyword.get(opts, :location) do
-          %{file: file, line: line} = __ENV__
-          file = Path.relative_to_cwd(file)
-          ["#{file}:#{line} " | label]
-        else
-          label
-        end
-
-      label = ["ic| " | label]
-      opts = Keyword.merge([label: label], opts)
-
-      IO.inspect(unquote(term), opts)
+      IO.inspect(unquote(term), inspect_opts)
     end
   end
 
-  defmacro __using__(_opts) do
-    quote do
-      require IceCream
-      import IceCream
-    end
+  @doc false
+  def build_label(term_string, env, opts) do
+    opts = Keyword.merge(Application.get_all_env(:ice_cream), opts)
+
+    [term_string]
+    |> maybe_prepend_function(Keyword.get(opts, :function, false), env)
+    |> maybe_prepend_location(Keyword.get(opts, :location, false), env)
+    |> prepend_ic()
   end
+
+  defp maybe_prepend_function(label_io_list, prepend?, env)
+  defp maybe_prepend_function(label_io_list, false, _), do: label_io_list
+  defp maybe_prepend_function(label_io_list, true, %{function: nil}), do: label_io_list
+
+  defp maybe_prepend_function(label_io_list, true, env) do
+    %{function: {func, arity}, module: module} = env
+    ["in ", to_string(module), ".", to_string(func), "/", to_string(arity), " " | label_io_list]
+  end
+
+  defp maybe_prepend_location(label_io_list, prepend?, env)
+  defp maybe_prepend_location(label_io_list, false, _), do: label_io_list
+
+  defp maybe_prepend_location(label_io_list, true, env) do
+    %{file: file, line: line} = env
+    file = Path.relative_to_cwd(file)
+    [file, ":", to_string(line), " " | label_io_list]
+  end
+
+  defp prepend_ic(label_io_list), do: ["ic| " | label_io_list]
 end
