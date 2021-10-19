@@ -73,12 +73,12 @@ defmodule IceCream do
     use IceCream
 
     def bar(baz) do
-      ic(baz)
+      ic(baz, location: true, function: true)
     end
   end
 
   # running Foo.bar()
-  Foo.bar(1.0, location: true, function: true) # ic| lib/foo.ex:5 in Elixir.Foo.bar/1 baz: 1.0
+  Foo.bar(1.0) # ic| lib/foo.ex:5 in Elixir.Foo.bar/1 baz: 1.0
   1.0
   ```
   """

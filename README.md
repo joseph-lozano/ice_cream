@@ -15,7 +15,7 @@ The package can be installed by adding `ice_cream` to your list of dependencies 
 ```elixir
 def deps do
   [
-    {:ice_cream, "~> 0.0.3", only: [:dev, :test]}
+    {:ice_cream, "~> 0.0.4", only: [:dev, :test]}
   ]
 end
 ```
