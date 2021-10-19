@@ -1,7 +1,22 @@
 defmodule IceCream do
   @spec ic() :: Macro.t()
   @doc """
-  Prints the calling filename, line number, and parent module/function.
+  Prints the calling filename, line number, and parent module/function. It returns an `:ok` atom.
+
+  ```elixir
+  # lib/foo.ex
+  defmodule Foo do
+    use IceCream
+
+    def bar do
+      ic()
+    end
+  end
+
+  # running Foo.bar()
+  Foo.bar() # ic| lib/foo.ex:5 in Elixir.Foo.bar/0
+  :ok
+  ```
   """
 
   defmacro ic() do
@@ -22,26 +37,50 @@ defmodule IceCream do
   @doc """
   Prints the term with itself as a label. Returns the evaluated term.
 
-  Accepts the same `opts` as the Inspect protocol. (see: [`Inspect.Opts`](https://hexdocs.pm/elixir/Inspect.Opts.html))
-
   ## Examples
-  ### Variables
-      foo = "abc"
-      ic(foo)
-  Prints
-      ic| foo: "abc"
 
-  ### Module Function Argument calls
-      ic(:math.pow(2,3))
-  Prints
-      ic| :math.pow(2,3): 8.0
+  #### Variables
 
+  ```
+  foo = "abc"
+  ic(foo) # ic| foo: "abc"
+  "abc"
+  ```
+
+  #### Module Function Argument calls
+  ```
+  ic(:math.pow(2,3)) # ic| :math.pow(2,3): 8.0
+  8.0
+  ```
   It also works with pipes
-      2
-      |> :math.pow(3)
-      |> ic()
+  ```
+  2
+  |> :math.pow(3)
+  |> ic() # ic| :math.pow(2,3): 8.0`
+  8.0
+  ```
 
-  also prints `ic| :math.pow(2,3): 8.0`
+  ## Options
+
+  Accepts the same options as the Inspect protocol. (see: [`Inspect.Opts`](https://hexdocs.pm/elixir/Inspect.Opts.html)), with some additions:
+
+  * `:location` - when truthy, will add the file name and line number.
+  * `:function` - when truthy, will print out the module name with the function name and arity.
+
+  ```
+  # lib/foo.ex
+  defmodule Foo do
+    use IceCream
+
+    def bar(baz) do
+      ic(baz)
+    end
+  end
+
+  # running Foo.bar()
+  Foo.bar(1.0, location: true, function: true) # ic| lib/foo.ex:5 in Elixir.Foo.bar/1 baz: 1.0
+  1.0
+  ```
   """
 
   defmacro ic(term, opts \\ []) do

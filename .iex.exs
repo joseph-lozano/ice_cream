@@ -37,14 +37,6 @@ ic(:math.pi())
 Application.put_env(:ice_cream, :line, true)
 Process.sleep(400)
 
-defmodule Foo do
-  def bar(x) do
-    ic(x)
-  end
-end
-
-Foo.bar(1)
-
 # 2
 # |> :math.pow(3)
 # |> ic()
