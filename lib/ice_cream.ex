@@ -33,7 +33,7 @@ defmodule IceCream do
     end
   end
 
-  @spec ic(term(), Keyword.t()) :: Macro.t()
+  @spec ic(term(), keyword()) :: term()
   @doc """
   Prints the term with itself as a label. Returns the evaluated term.
 

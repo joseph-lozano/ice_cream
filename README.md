@@ -22,7 +22,7 @@ IceCream provides 2 macros. `IceCream.ic/0` , and `IceCream.ic/2` .
 
 ## Configuration
 
-Default options can be configured with Mix.
+Default options are configurable.
 
 In addition to `location` and `function` , any of the [Inspect options](https://hexdocs.pm/elixir/Inspect.Opts.html) can be set, such as `:limit`
 
