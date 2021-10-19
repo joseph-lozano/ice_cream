@@ -2,6 +2,12 @@
 
 IceCream is a port of the [python package](https://github.com/gruns/icecream) of the same name.
 
+#### Never use `IO.inspect()` again
+
+Use IceCream to automatically apply a label.
+
+![Example Usage](./screen-shot.png)
+
 ## Installation
 
 The package can be installed by adding `ice_cream` to your list of dependencies in `mix.exs` . It should only be added for the `dev` and `test` environments.

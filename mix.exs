@@ -11,12 +11,17 @@ defmodule IceCream.MixProject do
       description: "Never use IO.inspect again",
       source_url: "https://github.com/joseph-lozano/ice_cream",
       package: package(),
+      aliases: [docs: ["docs", &copy_images/1]],
       docs: [
         main: "readme",
         logo: "logo.svg",
         extras: ["README.md"]
       ]
     ]
+  end
+
+  defp copy_images(_) do
+    File.cp!("./screen-shot.png", "doc/screen-shot.png")
   end
 
   defp package() do
