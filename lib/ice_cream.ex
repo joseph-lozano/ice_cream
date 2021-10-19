@@ -1,5 +1,5 @@
 defmodule IceCream do
-  @spec ic() :: Macro.t()
+  @spec ic() :: :ok
   @doc """
   Prints the calling filename, line number, and parent module/function. It returns an `:ok` atom.
 
