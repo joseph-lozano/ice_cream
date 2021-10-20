@@ -5,7 +5,7 @@ defmodule IceCream.MixProject do
     [
       name: "Ice Cream",
       app: :ice_cream,
-      version: "0.0.4",
+      version: "0.0.5",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
       description: "Never use IO.inspect again",
@@ -15,7 +15,7 @@ defmodule IceCream.MixProject do
       docs: [
         main: "readme",
         logo: "logo.svg",
-        extras: ["README.md", "usage.livemd"]
+        extras: ["README.livemd"]
       ]
     ]
   end

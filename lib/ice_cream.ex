@@ -94,6 +94,7 @@ defmodule IceCream do
         if !!Keyword.get(opts, :function) and not is_nil(__ENV__.function) do
           %{module: module, function: function} = __ENV__
           {func, arity} = function
+          module = String.replace_leading("#{module}", "Elixir.", "")
           ["in #{module}.#{func}/#{arity} " | label]
         else
           label

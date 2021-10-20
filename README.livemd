@@ -1,4 +1,8 @@
+<!-- livebook:{"persist_outputs":true} -->
+
 # IceCream
+
+## Section
 
 IceCream is a port of the [python package](https://github.com/gruns/icecream) of the same name.
 
@@ -12,10 +16,10 @@ Use IceCream to inspect any Elixir term with an automatically generated label.
 
 The package can be installed by adding `ice_cream` to your list of dependencies in `mix.exs` . It should only be added for the `dev` and `test` environments.
 
-```elixir
+```
 def deps do
   [
-    {:ice_cream, "~> 0.0.5", only: [:dev, :test]}
+    {:ice_cream, "~> 0.0.4", only: [:dev, :test]}
   ]
 end
 ```
@@ -26,13 +30,87 @@ The docs can be found at [https://hexdocs.pm/ice_cream](https://hexdocs.pm/ice_c
 
 IceCream provides 2 macros. `IceCream.ic/0` , and `IceCream.ic/2` .
 
+```elixir
+Mix.install([{:ice_cream, path: "./"}])
+```
+
+```output
+:ok
+```
+
+```elixir
+use IceCream
+foo = "abc"
+# ic| foo: "abc"
+ic(foo)
+"abc"
+```
+
+```output
+ic| foo: "abc"
+```
+
+```output
+"abc"
+```
+
+If in a function, you can pass `:location` and `:function` as options
+
+```elixir
+defmodule Foo do
+  def bar(baz) do
+    ic(baz, function: true, location: true)
+  end
+end
+
+Foo.bar("a string")
+```
+
+```output
+ic| README.livemd#cell:3 in Foo.bar/1 baz: "a string"
+```
+
+```output
+"a string"
+```
+
+It also works if you pass in a function
+
+```elixir
+ic(:math.pow(2, 3))
+```
+
+```output
+ic| :math.pow(2, 3): 8.0
+```
+
+```output
+8.0
+```
+
+Or if with pipes
+
+```elixir
+2
+|> :math.pow(3)
+|> ic()
+```
+
+```output
+ic| :math.pow(2, 3): 8.0
+```
+
+```output
+8.0
+```
+
 ## Configuration
 
 Default options are configurable.
 
 In addition to `location` and `function` , any of the [Inspect options](https://hexdocs.pm/elixir/Inspect.Opts.html) can be set, such as `:limit`
 
-```elixir
+```
 # config/dev.exs
 config :ice_cream,
   location: true,
