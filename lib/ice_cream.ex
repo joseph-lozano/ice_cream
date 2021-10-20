@@ -84,7 +84,9 @@ defmodule IceCream do
   """
 
   defmacro ic(term, opts \\ []) do
-    label = [Macro.to_string(term)]
+    IO.puts("before replace: #{inspect(term)}")
+    ast_to_label = replace_ic(term)
+    label = [Macro.to_string(ast_to_label)]
 
     quote do
       opts = Keyword.merge(Application.get_all_env(:ice_cream), unquote(opts))
@@ -115,6 +117,16 @@ defmodule IceCream do
       IO.inspect(unquote(term), opts)
     end
   end
+
+  defp replace_ic({:ic, _meta, args}) do
+    List.first(args)
+  end
+
+  defp replace_ic({func, meta, args}) when is_list(args) do
+    {func, meta, Enum.map(args, &replace_ic(&1))}
+  end
+
+  defp replace_ic(ast), do: ast
 
   defmacro __using__(_opts) do
     quote do
