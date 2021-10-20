@@ -1,12 +1,18 @@
 defmodule IceCream do
-  @spec ic() :: :ok
+  defmacro __using__(_opts) do
+    quote do
+      require IceCream
+      import IceCream
+    end
+  end
+
   @doc """
   Prints the calling filename, line number, and parent module/function. It returns an `:ok` atom.
 
   ```elixir
   # lib/foo.ex
   defmodule Foo do
-    use IceCream
+    import IceCream
 
     def bar do
       ic()
@@ -18,22 +24,13 @@ defmodule IceCream do
   :ok
   ```
   """
-
   defmacro ic() do
     quote do
-      %{file: file, line: line, module: module, function: function} = __ENV__
-      file = Path.relative_to_cwd(file)
-
-      if is_nil(function) do
-        IO.puts("ic| #{file}:#{line}")
-      else
-        {func, arity} = function
-        IO.puts("ic| #{file}:#{line} in #{module}.#{func}/#{arity}")
-      end
+      IceCream.build_label("", __ENV__, function: true, location: true)
+      |> IO.puts()
     end
   end
 
-  @spec ic(term(), keyword()) :: term()
   @doc """
   Prints the term with itself as a label. Returns the evaluated term.
 
@@ -70,7 +67,7 @@ defmodule IceCream do
   ```
   # lib/foo.ex
   defmodule Foo do
-    use IceCream
+    import IceCream
 
     def bar(baz) do
       ic(baz, location: true, function: true)
@@ -82,56 +79,57 @@ defmodule IceCream do
   1.0
   ```
   """
-
   defmacro ic(term, opts \\ []) do
-    IO.puts("before replace: #{inspect(term)}")
-    ast_to_label = replace_ic(term)
-    label = [Macro.to_string(ast_to_label)]
+    label_io_list = [Macro.to_string(replace_ic(term))]
 
     quote do
-      opts = Keyword.merge(Application.get_all_env(:ice_cream), unquote(opts))
-      label = unquote(label)
+      label = IceCream.build_label(unquote(label_io_list), __ENV__, unquote(opts))
+      inspect_opts = Keyword.merge([label: label], unquote(opts))
 
-      label =
-        if !!Keyword.get(opts, :function) and not is_nil(__ENV__.function) do
-          %{module: module, function: function} = __ENV__
-          {func, arity} = function
-          module = String.replace_leading("#{module}", "Elixir.", "")
-          ["in #{module}.#{func}/#{arity} " | label]
-        else
-          label
-        end
-
-      label =
-        if Keyword.get(opts, :location) do
-          %{file: file, line: line} = __ENV__
-          file = Path.relative_to_cwd(file)
-          ["#{file}:#{line} " | label]
-        else
-          label
-        end
-
-      label = ["ic| " | label]
-      opts = Keyword.merge([label: label], opts)
-
-      IO.inspect(unquote(term), opts)
+      IO.inspect(unquote(term), inspect_opts)
     end
   end
 
-  defp replace_ic({:ic, _meta, args}) do
-    List.first(args)
+  @doc false
+  def build_label(term_string, env, opts) do
+    opts = Keyword.merge(Application.get_all_env(:ice_cream), opts)
+
+    [term_string]
+    |> maybe_prepend_function(Keyword.get(opts, :function, false), env)
+    |> maybe_prepend_location(Keyword.get(opts, :location, false), env)
+    |> prepend_ic()
   end
 
-  defp replace_ic({func, meta, args}) when is_list(args) do
-    {func, meta, Enum.map(args, &replace_ic(&1))}
-  end
-
+  defp replace_ic({:ic, _meta, args}), do: replace_ic(List.first(args))
+  defp replace_ic({f, m, args}) when is_list(args), do: {f, m, Enum.map(args, &replace_ic(&1))}
   defp replace_ic(ast), do: ast
 
-  defmacro __using__(_opts) do
-    quote do
-      require IceCream
-      import IceCream
-    end
+  defp maybe_prepend_function(label_io_list, prepend?, env)
+  defp maybe_prepend_function(label_io_list, false, _), do: label_io_list
+  defp maybe_prepend_function(label_io_list, true, %{function: nil}), do: label_io_list
+
+  defp maybe_prepend_function(label_io_list, true, env) do
+    %{function: {func, arity}, module: module} = env
+
+    [
+      "in ",
+      String.replace_leading(to_string(module), "Elixir.", ""),
+      ".",
+      to_string(func),
+      "/",
+      to_string(arity),
+      " " | label_io_list
+    ]
   end
+
+  defp maybe_prepend_location(label_io_list, prepend?, env)
+  defp maybe_prepend_location(label_io_list, false, _), do: label_io_list
+
+  defp maybe_prepend_location(label_io_list, true, env) do
+    %{file: file, line: line} = env
+    file = Path.relative_to_cwd(file)
+    [file, ":", to_string(line), " " | label_io_list]
+  end
+
+  defp prepend_ic(label_io_list), do: ["ic| " | label_io_list]
 end

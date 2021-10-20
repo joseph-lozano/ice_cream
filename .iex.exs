@@ -1,4 +1,1 @@
-use IceCream
-
-
-ic({:ic, :bar, [:ic]})
+import IceCream
