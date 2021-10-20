@@ -4,7 +4,7 @@ IceCream is a port of the [python package](https://github.com/gruns/icecream) of
 
 #### Never use `IO.inspect()` again
 
-Use IceCream to inspect any elixir term with an automatically generated label.
+Use IceCream to inspect any Elixir term with an automatically generated label.
 
 ![Example Usage](./screen-shot.png)
 
