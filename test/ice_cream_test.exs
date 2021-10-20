@@ -1,8 +1,9 @@
 defmodule IceCreamTest do
   use ExUnit.Case
-  use IceCream
 
   defmodule ExamplePipeline do
+    import IceCream
+
     def some_fun(data) do
       data
       |> ic()
@@ -21,13 +22,8 @@ defmodule IceCreamTest do
              ExamplePipeline.some_fun(42)
            end) == """
            ic| data: 42
-           ic| fabricate(ic(data)): 42
-           ic| cleanup(ic(fabricate(ic(data)))): 42
+           ic| fabricate(data): 42
+           ic| cleanup(fabricate(data)): 42
            """
-             # ExamplePipeline.some_fun(42)
-  end
-
-  test "" do
-    ExamplePipeline.some_fun(42)
   end
 end

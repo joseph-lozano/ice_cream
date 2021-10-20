@@ -1,9 +1,29 @@
 defmodule IceCream do
-  @spec ic() :: Macro.t()
-  @doc """
-  Prints the calling filename, line number, and parent module/function.
-  """
+  defmacro __using__(_opts) do
+    quote do
+      require IceCream
+      import IceCream
+    end
+  end
 
+  @doc """
+  Prints the calling filename, line number, and parent module/function. It returns an `:ok` atom.
+
+  ```elixir
+  # lib/foo.ex
+  defmodule Foo do
+    import IceCream
+
+    def bar do
+      ic()
+    end
+  end
+
+  # running Foo.bar()
+  Foo.bar() # ic| lib/foo.ex:5 in Elixir.Foo.bar/0
+  :ok
+  ```
+  """
   defmacro ic() do
     quote do
       IceCream.build_label("", __ENV__, function: true, location: true)
@@ -11,34 +31,56 @@ defmodule IceCream do
     end
   end
 
-  @spec ic(term(), Keyword.t()) :: Macro.t()
   @doc """
   Prints the term with itself as a label. Returns the evaluated term.
 
-  Accepts the same `opts` as the Inspect protocol. (see: [`Inspect.Opts`](https://hexdocs.pm/elixir/Inspect.Opts.html))
-
   ## Examples
-  ### Variables
-      foo = "abc"
-      ic(foo)
-  Prints
-      ic| foo: "abc"
 
-  ### Module Function Argument calls
-      ic(:math.pow(2,3))
-  Prints
-      ic| :math.pow(2,3): 8.0
+  #### Variables
 
+  ```
+  foo = "abc"
+  ic(foo) # ic| foo: "abc"
+  "abc"
+  ```
+
+  #### Module Function Argument calls
+  ```
+  ic(:math.pow(2,3)) # ic| :math.pow(2,3): 8.0
+  8.0
+  ```
   It also works with pipes
-      2
-      |> :math.pow(3)
-      |> ic()
+  ```
+  2
+  |> :math.pow(3)
+  |> ic() # ic| :math.pow(2,3): 8.0`
+  8.0
+  ```
 
-  also prints `ic| :math.pow(2,3): 8.0`
+  ## Options
+
+  Accepts the same options as the Inspect protocol. (see: [`Inspect.Opts`](https://hexdocs.pm/elixir/Inspect.Opts.html)), with some additions:
+
+  * `:location` - when truthy, will add the file name and line number.
+  * `:function` - when truthy, will print out the module name with the function name and arity.
+
+  ```
+  # lib/foo.ex
+  defmodule Foo do
+    import IceCream
+
+    def bar(baz) do
+      ic(baz, location: true, function: true)
+    end
+  end
+
+  # running Foo.bar()
+  Foo.bar(1.0) # ic| lib/foo.ex:5 in Elixir.Foo.bar/1 baz: 1.0
+  1.0
+  ```
   """
-
   defmacro ic(term, opts \\ []) do
-    label_io_list = [Macro.to_string(term)]
+    label_io_list = [Macro.to_string(replace_ic(term))]
 
     quote do
       label = IceCream.build_label(unquote(label_io_list), __ENV__, unquote(opts))
@@ -58,13 +100,26 @@ defmodule IceCream do
     |> prepend_ic()
   end
 
+  defp replace_ic({:ic, _meta, args}), do: replace_ic(List.first(args))
+  defp replace_ic({f, m, args}) when is_list(args), do: {f, m, Enum.map(args, &replace_ic(&1))}
+  defp replace_ic(ast), do: ast
+
   defp maybe_prepend_function(label_io_list, prepend?, env)
   defp maybe_prepend_function(label_io_list, false, _), do: label_io_list
   defp maybe_prepend_function(label_io_list, true, %{function: nil}), do: label_io_list
 
   defp maybe_prepend_function(label_io_list, true, env) do
     %{function: {func, arity}, module: module} = env
-    ["in ", to_string(module), ".", to_string(func), "/", to_string(arity), " " | label_io_list]
+
+    [
+      "in ",
+      String.replace_leading(to_string(module), "Elixir.", ""),
+      ".",
+      to_string(func),
+      "/",
+      to_string(arity),
+      " " | label_io_list
+    ]
   end
 
   defp maybe_prepend_location(label_io_list, prepend?, env)
