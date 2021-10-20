@@ -19,7 +19,7 @@ The package can be installed by adding `ice_cream` to your list of dependencies 
 ```
 def deps do
   [
-    {:ice_cream, "~> 0.0.4", only: [:dev, :test]}
+    {:ice_cream, "~> 0.0.5", only: [:dev, :test]}
   ]
 end
 ```
@@ -28,8 +28,8 @@ The docs can be found at [https://hexdocs.pm/ice_cream](https://hexdocs.pm/ice_c
 
 ## Usage
 
-Use IceCream in place of `IO.inspect/2`. So write `ic(value)` instead of
-`IO.inspect(some_value, label: "some_value")`
+Use IceCream in place of `IO.inspect/2` . So write `ic(value)` instead of
+ `IO.inspect(some_value, label: "some_value")`
 
 It can also be used inside of pipelines. You can write:
 
