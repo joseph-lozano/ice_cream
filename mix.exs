@@ -15,7 +15,7 @@ defmodule IceCream.MixProject do
       docs: [
         main: "readme",
         logo: "logo.svg",
-        extras: ["README.md"]
+        extras: ["README.md", "usage.livemd"]
       ]
     ]
   end

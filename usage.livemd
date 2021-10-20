@@ -1,0 +1,25 @@
+# Usage
+
+## Installation
+
+Add `{:ice_cream, "~> 0.0.4"}` to your list of dependencies
+
+```elixir
+Mix.install([{:ice_cream, "~> 0.0.4"}])
+```
+
+## Usage
+
+In your module, add `use IceCream` then just use `ic/0` or `ic/2`!
+
+```elixir
+defmodule Foo do
+  use IceCream
+
+  def bar(baz) do
+    ic(baz)
+  end
+end
+
+Foo.bar("a string")
+```
