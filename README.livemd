@@ -1,5 +1,7 @@
 <!-- livebook:{"persist_outputs":true} -->
 
+## Archived in favore on [Kernel.dbg](https://hexdocs.pm/elixir/Kernel.html#dbg/2)
+
 # IceCream
 
 ## Section
